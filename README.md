@@ -54,4 +54,5 @@ pip install -r requirements.txt
 ```
 ---
 
-**Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here.
+**Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here
+https://github.com/Code-Maven/wis-python-course-2026-03
