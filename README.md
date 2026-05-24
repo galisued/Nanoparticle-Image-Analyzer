@@ -50,3 +50,7 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+---
+
+**Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here.
