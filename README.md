@@ -20,8 +20,8 @@ Characterizing the growth kinetics of porous nanoparticles typically requires re
 
 ### Expected Inputs
 1. **TEM Images:** A directory containing standard image files (`.png`, `.jpg`, or `.tiff`) captured via Transmission Electron Microscopy.
-2. **Synthesis Time Metadata:** * A configuration mapping or a structured filename convention (e.g., `sample_t60min_01.png`) providing the specific synthesis duration (in minutes or hours) for each image batch.
-   * A user-defined calibration factor (pixel-to-nanometer ratio) to ensure physical accuracy.
+2. A user-defined calibration factor (pixel-to-nanometer ratio) to ensure physical accuracy.
+2. **Synthesis Time:** * A specific synthesis duration (in hours or days) for each image batch.
 
 ### Expected Outputs
 For every processed image directory, the application generates:
@@ -41,8 +41,8 @@ This project requires Python 3.8+. To clone the repository and install the neces
 
 ```bash
 # Clone the repository
-git clone [https://github.com/YOUR_USERNAME/DMSN-Analyzer.git](https://github.com/YOUR_USERNAME/DMSN-Analyzer.git)
-cd DMSN-Analyzer
+git clone [https://github.com/galisued/Nanoparticle-Image-Analyzer.git](https://github.com/galisued/Nanoparticle-Image-Analyzer.git)
+cd Nanoparticle-Image-Analyzer
 
 # Create and activate a virtual environment
 python -m venv venv
