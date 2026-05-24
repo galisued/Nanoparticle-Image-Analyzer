@@ -20,7 +20,7 @@ Characterizing the growth kinetics of porous nanoparticles typically requires re
 
 ### Expected Inputs
 1. **TEM Images:** A directory containing standard image files (`.png`, `.jpg`, or `.tiff`) captured via Transmission Electron Microscopy.
-2. **Image Calibration:**A user-defined calibration factor (pixel-to-nanometer ratio) to ensure physical accuracy.
+2. **Image Calibration:** A user-defined calibration factor (pixel-to-nanometer ratio) to ensure physical accuracy.
 2. **Synthesis Time:** A specific synthesis duration (in hours or days) for each image batch.
 
 ### Expected Outputs
