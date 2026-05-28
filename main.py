@@ -64,18 +64,44 @@ def plot_diameter_and_volume(final_statistics):
         x_values = []
         x_labels = []
         y_diameter = []
+        y_diameter_err = []
         y_volume = []
+        y_volume_err = []
 
         for timepoint in stats_sorted:
             x_labels.append(timepoint["synthesis_time"])
             xval = parse_synthesis_time_to_hours(timepoint["synthesis_time"])
             x_values.append(xval if xval is not None else len(x_values))
-            y_diameter.append(timepoint["average_diameter_nm"])
-            y_volume.append(compute_particle_volume_nm3(timepoint["average_diameter_nm"]))
+            diameter = timepoint["average_diameter_nm"]
+            std_dev = timepoint.get("standard_deviation_nm", 0)
+            y_diameter.append(diameter)
+            y_diameter_err.append(std_dev)
+            y_volume.append(compute_particle_volume_nm3(diameter))
+            y_volume_err.append((np.pi / 2.0) * diameter**2 * std_dev)
 
         color = colors[idx % len(colors)]
-        ax1.plot(x_values, y_diameter, marker='o', color=color, label=sample_name)
-        ax2.plot(x_values, y_volume, marker='o', color=color, label=sample_name)
+        ax1.errorbar(
+            x_values,
+            y_diameter,
+            yerr=y_diameter_err,
+            marker='o',
+            linestyle='-'
+            ,
+            color=color,
+            capsize=4,
+            label=sample_name
+        )
+        ax2.errorbar(
+            x_values,
+            y_volume,
+            yerr=y_volume_err,
+            marker='o',
+            linestyle='-'
+            ,
+            color=color,
+            capsize=4,
+            label=sample_name
+        )
 
         if any(parse_synthesis_time_to_hours(lbl) is None for lbl in x_labels):
             ax1.set_xticks(range(len(x_labels)))
