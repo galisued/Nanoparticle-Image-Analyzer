@@ -1,9 +1,10 @@
 import os
+import os
 import re
+import csv
+from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-
-# Import your functions from the other two files
 from data_input import collect_sample_data
 from vision_engine import analyze_single_image
 
@@ -95,6 +96,46 @@ def plot_diameter_and_volume(final_statistics):
     plt.close(fig)
 
 
+def generate_report(final_statistics, output_folder='Verification_Output'):
+    """Generate CSV and Markdown report summarizing results and reference plots."""
+    os.makedirs(output_folder, exist_ok=True)
+    csv_path = os.path.join(output_folder, 'results_summary.csv')
+    md_path = os.path.join(output_folder, 'results_report.md')
+    plot_path = os.path.join(output_folder, 'diameter_and_volume_vs_time.png')
+
+    # Write CSV
+    with open(csv_path, 'w', newline='') as csvfile:
+        fieldnames = ['sample_name', 'synthesis_time', 'total_particles', 'average_diameter_nm', 'standard_deviation_nm']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for stat in final_statistics:
+            writer.writerow({
+                'sample_name': stat.get('sample_name', ''),
+                'synthesis_time': stat.get('synthesis_time', ''),
+                'total_particles': stat.get('total_particles', 0),
+                'average_diameter_nm': stat.get('average_diameter_nm', 0),
+                'standard_deviation_nm': stat.get('standard_deviation_nm', 0)
+            })
+
+    # Write Markdown report
+    now = datetime.now().isoformat(sep=' ', timespec='seconds')
+    with open(md_path, 'w') as md:
+        md.write(f"# Nanoparticle Analysis Report\n\n")
+        md.write(f"Generated: {now}\n\n")
+        md.write(f"## Summary Table\n\n")
+        md.write(f"| Sample | Synthesis Time | Particles | Avg Diameter (nm) | Std Dev (nm) |\n")
+        md.write(f"|---|---:|---:|---:|---:|\n")
+        for stat in final_statistics:
+            md.write(f"| {stat.get('sample_name','')} | {stat.get('synthesis_time','')} | {stat.get('total_particles',0)} | {stat.get('average_diameter_nm',0):.2f} | {stat.get('standard_deviation_nm',0):.2f} |\n")
+
+        md.write('\n')
+        if os.path.exists(plot_path):
+            md.write(f"## Plots\n\n![Diameter and Volume vs Time]({os.path.basename(plot_path)})\n\n")
+        md.write("## Notes\n\n- Verification images are saved in the Verification_Output folder under each sample/timepoint subfolder.\n")
+
+    return {'csv': csv_path, 'markdown': md_path, 'plot': plot_path}
+
+
 def process_sample_batch(sample_dictionary):
     """Iterates through all timepoints in a sample and calculates statistics."""
     sample_name = sample_dictionary["sample_name"]
@@ -172,5 +213,8 @@ if __name__ == "__main__":
         plot_diameter_and_volume(final_statistics)
         print("\nSaved diameter and volume plots to 'Verification_Output/diameter_and_volume_vs_time.png'.")
 
-    print("\nDone! Check the 'Verification_Output' folder to see the drawn circles.")
+        report_paths = generate_report(final_statistics)
+        print(f"Saved CSV summary to '{report_paths['csv']}' and markdown report to '{report_paths['markdown']}'.")
+
+    print("\nDone! Check the 'Verification_Output' folder to see the drawn circles and reports.")
     print("========================================\n")
