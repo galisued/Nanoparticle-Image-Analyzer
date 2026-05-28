@@ -1,5 +1,4 @@
 import os
-import os
 import re
 import csv
 from datetime import datetime
@@ -40,14 +39,21 @@ def compute_particle_volume_nm3(diameter_nm):
 
 
 def plot_diameter_and_volume(final_statistics):
-    """Plot diameter and estimated volume for all samples over synthesis time."""
+    """Plot diameter and estimated volume for all samples over synthesis time.
+
+    Saves two separate PNG files in the `Verification_Output` folder:
+    - `diameter_vs_time.png`
+    - `volume_vs_time.png`
+    """
     samples = {}
     for stat in final_statistics:
         sample_name = stat["sample_name"]
         samples.setdefault(sample_name, []).append(stat)
 
     colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6), sharex=False)
+
+    fig1, ax1 = plt.subplots(figsize=(8, 6))
+    fig2, ax2 = plt.subplots(figsize=(8, 6))
 
     for idx, (sample_name, stats) in enumerate(samples.items()):
         stats_sorted = sorted(
@@ -80,20 +86,26 @@ def plot_diameter_and_volume(final_statistics):
             ax1.set_xlabel('Synthesis time (hours)')
             ax2.set_xlabel('Synthesis time (hours)')
 
-    ax1.set_title('Average Particle Diameter vs Synthesis Time')
+    # title intentionally removed
     ax1.set_ylabel('Average Diameter (nm)')
     ax1.grid(True, linestyle='--', alpha=0.4)
     ax1.legend()
 
-    ax2.set_title('Estimated Particle Volume vs Synthesis Time')
+    # title intentionally removed
     ax2.set_ylabel('Estimated Volume (nm³)')
     ax2.grid(True, linestyle='--', alpha=0.4)
     ax2.legend()
 
-    fig.tight_layout()
+    fig1.tight_layout()
+    fig2.tight_layout()
     os.makedirs('Verification_Output', exist_ok=True)
-    fig.savefig(os.path.join('Verification_Output', 'diameter_and_volume_vs_time.png'))
-    plt.close(fig)
+    diameter_path = os.path.join('Verification_Output', 'diameter_vs_time.png')
+    volume_path = os.path.join('Verification_Output', 'volume_vs_time.png')
+    fig1.savefig(diameter_path)
+    fig2.savefig(volume_path)
+    plt.close(fig1)
+    plt.close(fig2)
+    return {'diameter': diameter_path, 'volume': volume_path}
 
 
 def generate_report(final_statistics, output_folder='Verification_Output'):
@@ -101,8 +113,9 @@ def generate_report(final_statistics, output_folder='Verification_Output'):
     os.makedirs(output_folder, exist_ok=True)
     csv_path = os.path.join(output_folder, 'results_summary.csv')
     md_path = os.path.join(output_folder, 'results_report.md')
-    plot_path = os.path.join(output_folder, 'diameter_and_volume_vs_time.png')
-
+    plot_path = os.path.join(output_folder, 'diameter_vs_time.png')
+    plot_path_volume = os.path.join(output_folder, 'volume_vs_time.png')
+    
     # Write CSV
     with open(csv_path, 'w', newline='') as csvfile:
         fieldnames = ['sample_name', 'synthesis_time', 'total_particles', 'average_diameter_nm', 'standard_deviation_nm']
@@ -113,8 +126,8 @@ def generate_report(final_statistics, output_folder='Verification_Output'):
                 'sample_name': stat.get('sample_name', ''),
                 'synthesis_time': stat.get('synthesis_time', ''),
                 'total_particles': stat.get('total_particles', 0),
-                'average_diameter_nm': stat.get('average_diameter_nm', 0),
-                'standard_deviation_nm': stat.get('standard_deviation_nm', 0)
+                'average_diameter_nm': f"{stat.get('average_diameter_nm', 0):.1f}",
+                'standard_deviation_nm': f"{stat.get('standard_deviation_nm', 0):.1f}"
             })
 
     # Write Markdown report
@@ -129,8 +142,11 @@ def generate_report(final_statistics, output_folder='Verification_Output'):
             md.write(f"| {stat.get('sample_name','')} | {stat.get('synthesis_time','')} | {stat.get('total_particles',0)} | {stat.get('average_diameter_nm',0):.2f} | {stat.get('standard_deviation_nm',0):.2f} |\n")
 
         md.write('\n')
+        md.write(f"## Plots\n\n")
         if os.path.exists(plot_path):
-            md.write(f"## Plots\n\n![Diameter and Volume vs Time]({os.path.basename(plot_path)})\n\n")
+            md.write(f"### Average Diameter vs Time\n\n![Diameter vs Time]({os.path.basename(plot_path)})\n\n")
+        if os.path.exists(plot_path_volume):
+            md.write(f"### Estimated Volume vs Time\n\n![Volume vs Time]({os.path.basename(plot_path_volume)})\n\n")
         md.write("## Notes\n\n- Verification images are saved in the Verification_Output folder under each sample/timepoint subfolder.\n")
 
     return {'csv': csv_path, 'markdown': md_path, 'plot': plot_path}
