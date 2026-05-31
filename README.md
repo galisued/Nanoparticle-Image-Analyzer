@@ -6,11 +6,11 @@ An automated image processing pipeline written in Python to extract morphologica
 
 ## 1. What does this project do?
 
-Characterizing the growth kinetics of porous nanoparticles typically requires researchers to manually measure hundreds of particle diameters across multiple TEM images using software like ImageJ. This process is time-consuming and prone to human bias.
+Dendritic Mesoporous Silica Nanoparticles (DMSNs) are advanced nanomaterials characterized by their unique center-radial, hierarchical pore structures and high surface areas. Because of their unique morphology, they are highly valuable for applications like drug delivery, catalysis, and sensing. However, characterizing their growth kinetics requires researchers to manually measure hundreds of particle diameters across multiple Transmission Electron Microscopy (TEM) images. This process is incredibly time-consuming and prone to human bias.
 
 **DMSN-Analyzer** automates this workflow. It performs the following tasks:
 * **Image Preprocessing & Noise Reduction:** Cleans TEM images to handle low contrast, varying brightness, and background variations typical in electron microscopy.
-* **Particle Detection & Segmentation:** Utilizes computer vision algorithms (via `OpenCV` and `scikit-image`) to isolate individual dendritic nanoparticles, even when minor overlapping occurs.
+* **Particle Detection & Segmentation:** Utilizes computer vision algorithms to isolate individual dendritic nanoparticles, even when minor overlapping occurs.
 * **Morphological Measurement:** Calibrates pixel sizes to physical nanometer scales, extracting the exact boundary, diameter, and calculated volume of each detected particle.
 * **Kinetic Analysis:** Aggregates statistical data across different sample batches and plots the growth kinetics to map synthesis progression over time.
 
@@ -54,5 +54,30 @@ pip install -r requirements.txt
 ```
 ---
 
+## 4. Usage (How to Run the Code)
+
+### Step 1: Launch the Application
+Open your terminal, ensure your virtual environment is activated, and run the GUI script:
+`bash
+python DMSN_Analyzer.py
+`
+
+### Step 2: Enter Sample Parameters
+The GUI will prompt you to enter the core details for your current dataset:
+* **Sample Name:** The identifier for your synthesis batch (e.g., "Silica_Batch_A").
+* **Pixel-to-Nanometer Ratio:** The calibration scale for your TEM images (e.g., `0.439`).
+
+### Step 3: Select TEM Images
+* For each synthesis timepoint (e.g., "24 hours", "3 days"), click the "Browse" button in the GUI.
+* Select all the relevant TEM images (`.tif`, `.jpg`, `.png`) for that specific timepoint.
+* You can add multiple timepoints for a single sample to track growth over time.
+
+### Step 4: Run Analysis & Review Results
+Click the **"Run Analysis"** button. The application will process the images using the core engine. Once complete, check the automatically generated `Verification_Output` folder in your directory. Here you will find:
+* Visual verification images with detected particles highlighted (to ensure accuracy).
+* High-resolution kinetic plots tracking diameter and volume over time (`diameter_vs_time.png` and `volume_vs_time.png`).
+* A comprehensive `.csv` summary and markdown report containing all your statistical data ready for publication.
+
+---
 **Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here
 https://github.com/Code-Maven/wis-python-course-2026-03
