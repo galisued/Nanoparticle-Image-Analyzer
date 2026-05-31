@@ -66,7 +66,6 @@ python DMSN_Analyzer.py
 The GUI will prompt you to enter the core details for your current dataset:
 * **Sample Name:** The identifier for your synthesis batch (e.g., "Silica_Batch_A").
 * **Pixel-to-Nanometer Ratio:** The calibration scale for your TEM images (e.g., `0.439`).
-* **Synthesis Time:** You can add multiple synthesis times for a single sample batch. For each specific timepoint, you will upload the TEM images that correspond to that duration.
 
 ### Step 3: Select TEM Images
 * For each synthesis timepoint (e.g., "24 hours", "3 days"), click the "Browse" button in the GUI.
