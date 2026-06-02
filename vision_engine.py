@@ -28,7 +28,7 @@ def analyze_single_image(image_path, pixel_to_nm_ratio, output_folder):
     # Detect circles
     circles = cv2.HoughCircles(
         img_blurred, cv2.HOUGH_GRADIENT, dp=1, minDist=80,     
-        param1=50, param2=22, minRadius=80, maxRadius=400    
+        param1=50, param2=22, minRadius=70, maxRadius=200    
     )
 
     # --- NEW: Create a color copy of the original high-res image for drawing ---
