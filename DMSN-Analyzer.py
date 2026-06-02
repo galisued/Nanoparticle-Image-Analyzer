@@ -16,7 +16,7 @@ def get_image_files():
     
     file_paths = filedialog.askopenfilenames(
         title="Select TEM Images for Current Sample",
-        filetypes=[("Tiff files", "*.tif *.tiff"), ("JPEG files", "*.jpg *.jpeg"), ("All files", "*.*")]
+        filetypes=[("Tiff files", "*.tif *.tiff"), ("JPEG files", "*.jpg *.jpeg"), ("PNG files", "*.png"), ("All files", "*.*")]
     )
     return list(file_paths)
 
