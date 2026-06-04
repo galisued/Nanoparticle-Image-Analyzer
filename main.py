@@ -8,7 +8,6 @@ from data_input import collect_sample_data
 from vision_engine import analyze_single_image
 
 def sanitize_folder_name(name):
-    """Convert synthesis time labels into safe folder names."""
     safe_name = "".join(
         c if (c.isalnum() or c in (' ', '_', '-')) else '_'
         for c in name
@@ -17,7 +16,6 @@ def sanitize_folder_name(name):
 
 
 def parse_synthesis_time_to_hours(label):
-    """Attempt to convert a synthesis time label into hours for plotting."""
     if not isinstance(label, str):
         return None
     matcher = re.search(r"([0-9]+\.?[0-9]*)", label)
@@ -34,21 +32,26 @@ def parse_synthesis_time_to_hours(label):
 
 
 def compute_particle_volume_nm3(diameter_nm):
-    """Estimate nanoparticle volume from diameter assuming a sphere."""
     return (np.pi / 6.0) * diameter_nm**3
 
 
 def plot_diameter_and_volume(final_statistics):
-    """Plot diameter and estimated volume for all samples over synthesis time.
-
-    Saves two separate PNG files in the `Verification_Output` folder:
-    - `diameter_vs_time.png`
-    - `volume_vs_time.png`
-    """
     samples = {}
     for stat in final_statistics:
         sample_name = stat["sample_name"]
         samples.setdefault(sample_name, []).append(stat)
+
+    # --- NEW: Determine the dominant unit for plotting ---
+    all_labels = [stat["synthesis_time"].lower() for stat in final_statistics]
+    
+    # If every single timepoint is in 'days', plot the X-axis in days.
+    # Otherwise, fallback to hours.
+    if all("day" in lbl for lbl in all_labels) and len(all_labels) > 0:
+        plot_unit = "days"
+        divisor = 24.0
+    else:
+        plot_unit = "hours"
+        divisor = 1.0
 
     colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
@@ -70,8 +73,14 @@ def plot_diameter_and_volume(final_statistics):
 
         for timepoint in stats_sorted:
             x_labels.append(timepoint["synthesis_time"])
-            xval = parse_synthesis_time_to_hours(timepoint["synthesis_time"])
-            x_values.append(xval if xval is not None else len(x_values))
+            hours_val = parse_synthesis_time_to_hours(timepoint["synthesis_time"])
+            
+            # --- NEW: Scale the extracted hours by the selected plot unit ---
+            if hours_val is not None:
+                x_values.append(hours_val / divisor)
+            else:
+                x_values.append(len(x_values))
+                
             diameter = timepoint["average_diameter_nm"]
             std_dev = timepoint.get("standard_deviation_nm", 0)
             y_diameter.append(diameter)
@@ -81,26 +90,12 @@ def plot_diameter_and_volume(final_statistics):
 
         color = colors[idx % len(colors)]
         ax1.errorbar(
-            x_values,
-            y_diameter,
-            yerr=y_diameter_err,
-            marker='o',
-            linestyle='-'
-            ,
-            color=color,
-            capsize=4,
-            label=sample_name
+            x_values, y_diameter, yerr=y_diameter_err,
+            marker='o', linestyle='-', color=color, capsize=4, label=sample_name
         )
         ax2.errorbar(
-            x_values,
-            y_volume,
-            yerr=y_volume_err,
-            marker='o',
-            linestyle='-'
-            ,
-            color=color,
-            capsize=4,
-            label=sample_name
+            x_values, y_volume, yerr=y_volume_err,
+            marker='o', linestyle='-', color=color, capsize=4, label=sample_name
         )
 
         if any(parse_synthesis_time_to_hours(lbl) is None for lbl in x_labels):
@@ -109,15 +104,14 @@ def plot_diameter_and_volume(final_statistics):
             ax2.set_xticks(range(len(x_labels)))
             ax2.set_xticklabels(x_labels, rotation=30, ha='right')
         else:
-            ax1.set_xlabel('Synthesis time (hours)')
-            ax2.set_xlabel('Synthesis time (hours)')
+            # --- NEW: Apply the dynamic plot unit to the axis labels ---
+            ax1.set_xlabel(f'Synthesis time ({plot_unit})')
+            ax2.set_xlabel(f'Synthesis time ({plot_unit})')
 
-    # title intentionally removed
     ax1.set_ylabel('Average Diameter (nm)')
     ax1.grid(True, linestyle='--', alpha=0.4)
     ax1.legend()
 
-    # title intentionally removed
     ax2.set_ylabel('Estimated Volume (nm³)')
     ax2.grid(True, linestyle='--', alpha=0.4)
     ax2.legend()
@@ -135,14 +129,12 @@ def plot_diameter_and_volume(final_statistics):
 
 
 def generate_report(final_statistics, output_folder='Verification_Output'):
-    """Generate CSV and Markdown report summarizing results and reference plots."""
     os.makedirs(output_folder, exist_ok=True)
     csv_path = os.path.join(output_folder, 'results_summary.csv')
     md_path = os.path.join(output_folder, 'results_report.md')
     plot_path = os.path.join(output_folder, 'diameter_vs_time.png')
     plot_path_volume = os.path.join(output_folder, 'volume_vs_time.png')
     
-    # Write CSV
     with open(csv_path, 'w', newline='') as csvfile:
         fieldnames = ['sample_name', 'synthesis_time', 'total_particles', 'average_diameter_nm', 'standard_deviation_nm']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -156,7 +148,6 @@ def generate_report(final_statistics, output_folder='Verification_Output'):
                 'standard_deviation_nm': f"{stat.get('standard_deviation_nm', 0):.1f}"
             })
 
-    # Write Markdown report
     now = datetime.now().isoformat(sep=' ', timespec='seconds')
     with open(md_path, 'w') as md:
         md.write(f"# Nanoparticle Analysis Report\n\n")
@@ -179,7 +170,6 @@ def generate_report(final_statistics, output_folder='Verification_Output'):
 
 
 def process_sample_batch(sample_dictionary):
-    """Iterates through all timepoints in a sample and calculates statistics."""
     sample_name = sample_dictionary["sample_name"]
     pixel_ratio = sample_dictionary["pixel_ratio"]
     timepoints = sample_dictionary.get("timepoints", [])
@@ -227,7 +217,6 @@ def process_sample_batch(sample_dictionary):
 
 if __name__ == "__main__":
     print("Starting Nanoparticle Image Analyzer...")
-    
     raw_dataset = collect_sample_data()
     
     print("\n" + "="*40)
