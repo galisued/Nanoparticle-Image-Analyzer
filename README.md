@@ -59,7 +59,7 @@ pip install -r requirements.txt
 ### Step 1: Launch the Application
 Open your terminal, ensure your virtual environment is activated, and run the GUI script:
 `bash
-python DMSN_Analyzer.py
+python gui_analyzer.py
 `
 
 ### Step 2: Enter Sample Parameters
