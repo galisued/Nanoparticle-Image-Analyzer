@@ -34,7 +34,19 @@ For every processed image directory, the application generates:
 
 ---
 
-## 3. Technicalities
+## 3. Project Structure
+
+The repository is organized into distinct modules to separate the user interface, data handling, and core analysis:
+
+* **`gui_analyzer.py`**: The graphical user interface (GUI) that allows users to easily input sample names, calibration ratios, and browse for TEM images.
+* **`data_input.py`**: Handles the data ingestion pipeline. It collects user inputs and maps the selected image file paths to their respective synthesis times.
+* **`vision_engine.py`**: The core computer vision module. It normalizes image scales, applies OpenCV algorithms (like `HoughCircles`) to detect the nanoparticles, and calculates their physical dimensions.
+* **`main.py`**: The primary orchestration script that links the data input collection with the vision processing engine.
+* **`test_main.py` & `test_vision_engine.py`**: Unit tests designed to verify the mathematical accuracy of the vision engine and ensure the overall logic runs without errors.
+
+---
+
+## 4. Technicalities
 
 ### Prerequisites & Installation
 This project requires Python 3.8+. To clone the repository and install the necessary dependencies, run the following commands in your terminal:
@@ -54,30 +66,38 @@ pip install -r requirements.txt
 ```
 ---
 
-## 4. Usage (How to Run the Code)
+## 5. Usage (How to Run the Code)
 
 ### Step 1: Launch the Application
 Open your terminal, ensure your virtual environment is activated, and run the GUI script:
-`bash
+```bash
 python gui_analyzer.py
-`
+```
 
-### Step 2: Enter Sample Parameters
-The GUI will prompt you to enter the core details for your current dataset:
-* **Sample Name:** The identifier for your synthesis batch (e.g., "Silica_Batch_A").
-* **Pixel-to-Nanometer Ratio:** The calibration scale for your TEM images (e.g., `0.439`).
+### Step 2: Configure Your Sample
+In the **1. Sample Configuration** section of the GUI:
+* **Sample Name:** Enter the identifier for your synthesis batch (e.g., "sample1").
+* **Calibration (nm/px):** Set your pixel-to-nanometer scale. This defaults to the standard manual calibration of `0.439`, but can be manually adjusted if needed (for the images in the folder the defult ratio is the right one).
 
-### Step 3: Select TEM Images
-* For each synthesis timepoint (e.g., "24 hours", "3 days"), click the "Browse" button in the GUI.
-* Select all the relevant TEM images (`.tif`, `.jpg`, `.png`) for that specific timepoint.
-* You can add multiple timepoints for a single sample to track growth over time.
+### Step 3: Add Synthesis Timepoints and Images
+In the **2. Synthesis Timepoints** section:
+* Enter the **Duration** and select the **Unit** from the dropdown menu (e.g., `24` and `Hours`).
+* Click the **"Browse..."** button to select all relevant TEM images (`.tif`, `.jpg`, `.png`) for that specific timepoint.
+* If you are tracking growth over time, click the **"+ Add Another Timepoint"** button to attach more image batches to the current sample.
 
-### Step 4: Run Analysis & Review Results
-Click the **"Run Analysis"** button. The application will process the images using the core engine. Once complete, check the automatically generated `Verification_Output` folder in your directory. Here you will find:
+### Step 4: Add Sample to Queue
+Once your sample's timepoints are configured, click the blue **"Add Sample"** button in the **3. Current Dataset Queue** section. 
+* Your configured sample will appear in the queue box. 
+* If you want to analyze multiple different samples at once, you can repeat steps 2-4 to add more batches to the queue.
+
+### Step 5: Run Analysis & Review Results
+When your queue is ready, click the large green **"Start Analysis Processing"** button at the bottom of the window. The application will process the queued datasets using the core vision engine. 
+
+Once complete, check the automatically generated `Verification_Output` folder in your project directory. Here you will find:
 * Visual verification images with detected particles highlighted (to ensure accuracy).
 * High-resolution kinetic plots tracking diameter and volume over time (`diameter_vs_time.png` and `volume_vs_time.png`).
 * A comprehensive `.csv` summary and markdown report containing all your statistical data ready for publication.
 
 ---
-**Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here
-https://github.com/Code-Maven/wis-python-course-2026-03
+**Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here:
+[https://github.com/Code-Maven/wis-python-course-2026-03](https://github.com/Code-Maven/wis-python-course-2026-03)
