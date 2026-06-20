@@ -77,11 +77,11 @@ python gui_analyzer.py
 ### Step 2: Configure Your Sample
 In the **1. Sample Configuration** section of the GUI:
 * **Sample Name:** Enter the identifier for your synthesis batch (e.g., "sample1").
-* **Calibration (nm/px):** Set your pixel-to-nanometer scale. This defaults to the standard manual calibration of `0.439`, but can be manually adjusted if needed (for the images in the folder the defult ratio is the right one).
+* **Calibration (nm/px):** Set your pixel-to-nanometer scale. This defaults to the standard manual calibration of `0.439`, but can be manually adjusted if needed. For the images in the folder, the defult ratio is the right one.
 
 ### Step 3: Add Synthesis Timepoints and Images
 In the **2. Synthesis Timepoints** section:
-* Enter the **Duration** and select the **Unit** from the dropdown menu (e.g., `24` and `Hours`).
+* Enter the **Duration** and select the **Unit** from the dropdown menu (e.g., `24` and `Hours`). For the images in the folder,  the synthesis time is written in the name of the folder.
 * Click the **"Browse..."** button to select all relevant TEM images (`.tif`, `.jpg`, `.png`) for that specific timepoint.
 * If you are tracking growth over time, click the **"+ Add Another Timepoint"** button to attach more image batches to the current sample.
 
