@@ -99,5 +99,19 @@ Once complete, check the automatically generated `Verification_Output` folder in
 * A comprehensive `.csv` summary and markdown report containing all your statistical data ready for publication.
 
 ---
+
+## 6. AI Usage
+
+I used Gemini to build this project. prompts I used:
+- For my final project in the python course, create a program that analyze the diameter of nanoparticles from Tem images. start from creatin a module that ask from the user sample name, synthesis time and pixel to nm ratio. after this ask if there is another sample and repeate it until the user answer no.
+- Build the module that takes this images and find its diameter and standard deviation. add an option to review the calculated diameter on the images themselfs.
+- The analyzer is not good enough. what is the meaning of each parameter.
+- build another module that present the statistics of the results and graphs of diameter vs. time and volume vs.time.
+- This is my project till now. make a new gui file that uses main and shows the results (csv and plot) on the new window
+- can you update both main and gui so before input the time, the user need to choose hours or days. if days are chosen, the units should be days and if hours than the units should be hours
+- Is it possible to delete the "add timepoint" and intead of it, make an option to add another time point to the rubtic an save the sample together? was i clear?
+- Can you make tests using pytest for main.py and vision_engine.py?
+
+---
 **Note:** This project is being developed as a final project for the Advanced Python Programming Course. You can view the course guidelines and core repository here:
 [https://github.com/Code-Maven/wis-python-course-2026-03](https://github.com/Code-Maven/wis-python-course-2026-03)
